@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pkl
+uploaded_repo/
+faiss_index.pkl
+.env
+*.pyc
