@@ -1,12 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-import zipfile, os, shutil
-from parser import parse_repo
-from embedder import build_index
-from rag import ask as rag_ask
 from pydantic import BaseModel
-from pathlib import Path
-
+import zipfile, os, shutil
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware,
@@ -14,6 +9,17 @@ app.add_middleware(CORSMiddleware,
   allow_headers=["*"])
 
 UPLOAD_DIR = "uploaded_repo"
+
+# Define ALL models at the top
+class Question(BaseModel):
+    query: str
+
+class FileRequest(BaseModel):
+    filename: str
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 @app.post("/upload")
 async def upload_repo(file: UploadFile = File(...)):
@@ -28,48 +34,42 @@ async def upload_repo(file: UploadFile = File(...)):
     os.remove(zip_path)
     return {"message": "Repo uploaded", "path": UPLOAD_DIR}
 
-@app.get("/health")
-async def health(): return {"status": "ok"}
-
 @app.post("/parse")
 async def parse():
+    from parser import parse_repo
     chunks = parse_repo(UPLOAD_DIR)
     return {
         "total_chunks": len(chunks),
         "sample": chunks[:2] if chunks else []
     }
 
-
 @app.post("/index")
 async def index_repo():
     from parser import parse_repo
+    from embedder import build_index
     chunks = parse_repo(UPLOAD_DIR)
     if not chunks:
         return {"error": "No chunks found"}
     build_index(chunks)
     return {"indexed": len(chunks)}
 
-
-class Question(BaseModel):
-    query: str
-
 @app.post("/ask")
 async def ask_question(q: Question):
+    from rag import ask as rag_ask
     return rag_ask(q.query)
-
 
 @app.post("/explain-file")
 async def explain_file(req: FileRequest):
-    # Find file in uploaded repo
+    from rag import ask as rag_ask
     for root, dirs, files in os.walk(UPLOAD_DIR):
         dirs[:] = [d for d in dirs
-                   if d not in ["node_modules",".git"]]
+                   if d not in ["node_modules", ".git"]]
         for f in files:
             if f == req.filename:
                 path = os.path.join(root, f)
-                with open(path,"r",errors="ignore") as fh:
+                with open(path, "r", errors="ignore") as fh:
                     content = fh.read()[:3000]
                 return rag_ask(
                     f"Explain what this file does:\n\n{content}"
                 )
-    return {"answer":"File not found","sources":[]}
+    return {"answer": "File not found", "sources": []}
