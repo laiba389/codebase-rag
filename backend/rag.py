@@ -1,38 +1,36 @@
-import ollama
+import os
+from groq import Groq
 from embedder import search
+from dotenv import load_dotenv
+load_dotenv()
 
-def build_prompt(query: str, chunks: list):
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+def build_prompt(query, chunks):
     context = ""
     for c in chunks:
-        fname = c["file"].split("\\")[-1]
+        fname = c["file"].split("/")[-1].split("\\")[-1]
         context += f"\n--- File: {fname} ---\n"
         context += c["text"] + "\n"
-    return f"""You are a helpful assistant that answers
-questions about a codebase.
+    return f"""You are a helpful assistant answering questions about a codebase.
 
-Here are the most relevant code snippets:
+Relevant code:
 {context}
 
 Question: {query}
 
-Answer based on the code above. Mention the filename(s) that were relevant."""
+Answer clearly and mention the filename(s) that were relevant."""
 
-def ask(query: str, k=5):
+def ask(query, k=5):
     chunks = search(query, k=k)
     if not chunks:
-        return {
-            "answer": "No indexed code found. Upload and index a repo first.",
-            "sources": []
-        }
-    prompt = build_prompt(query, chunks)
-    response = ollama.chat(
-        model="llama3.2",
-        messages=[{"role": "user", "content": prompt}]
+        return {"answer": "No indexed code found. Upload and index a repo first.", "sources": []}
+    res = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[{"role":"user","content":build_prompt(query,chunks)}],
+        temperature=0.2
     )
     sources = list(set(
-        c["file"].split("\\")[-1] for c in chunks
+        c["file"].split("/")[-1].split("\\")[-1] for c in chunks
     ))
-    return {
-        "answer": response["message"]["content"],
-        "sources": sources
-    }
+    return {"answer": res.choices[0].message.content, "sources": sources}

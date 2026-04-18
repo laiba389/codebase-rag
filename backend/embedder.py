@@ -1,39 +1,52 @@
 import os
-import faiss, pickle, numpy as np
-from sentence_transformers import SentenceTransformer
+import faiss
+import pickle
+import numpy as np
+from dotenv import load_dotenv
+load_dotenv()
 
-model = SentenceTransformer('all-MiniLM-L6-v2')  # downloads once, ~90MB
 INDEX_PATH = "faiss_index.pkl"
 
 def get_embedding(text: str):
-    return model.encode(text).tolist()
+    from groq import Groq
+    # Use simple hash-based embedding as fallback
+    # Actually use sentence via API
+    pass
+
+# Use TF-IDF style lightweight embeddings
+from sklearn.feature_extraction.text import TfidfVectorizer
+import scipy.sparse as sp
+
+vectorizer = None
 
 def build_index(chunks: list):
-    print(f"Embedding {len(chunks)} chunks...")
+    global vectorizer
+    print(f"Indexing {len(chunks)} chunks with TF-IDF...")
     texts = [c["text"] for c in chunks]
-    embeddings = model.encode(texts, show_progress_bar=True)
-    vecs = np.array(embeddings, dtype="float32")
+    vectorizer = TfidfVectorizer(max_features=768)
+    vecs = vectorizer.fit_transform(texts).toarray().astype("float32")
     dim = vecs.shape[1]
     index = faiss.IndexFlatL2(dim)
     index.add(vecs)
     with open(INDEX_PATH, "wb") as f:
-        pickle.dump({"index": index,
-                     "chunks": chunks,
-                     "dim": dim}, f)
+        pickle.dump({"index": index, "chunks": chunks,
+                     "vectorizer": vectorizer}, f)
     print("Index saved!")
     return index, chunks
 
 def load_index():
+    global vectorizer
     if not os.path.exists(INDEX_PATH):
         return None, []
     with open(INDEX_PATH, "rb") as f:
         data = pickle.load(f)
+    vectorizer = data["vectorizer"]
     return data["index"], data["chunks"]
 
 def search(query: str, k=5):
-    import os
     index, chunks = load_index()
-    if index is None: return []
-    q_vec = np.array([get_embedding(query)], dtype="float32")
+    if index is None or vectorizer is None:
+        return []
+    q_vec = vectorizer.transform([query]).toarray().astype("float32")
     distances, indices = index.search(q_vec, k)
     return [chunks[i] for i in indices[0] if i < len(chunks)]
