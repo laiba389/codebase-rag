@@ -5,7 +5,9 @@ import zipfile, os, shutil
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware,
-  allow_origins=["*"], allow_methods=["*"],
+  allow_origins=["*"],
+  allow_credentials=True,
+  allow_methods=["*"],
   allow_headers=["*"])
 
 UPLOAD_DIR = "uploaded_repo"
