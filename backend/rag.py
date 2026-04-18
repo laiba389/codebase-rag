@@ -26,7 +26,7 @@ def ask(query, k=5):
     if not chunks:
         return {"answer": "No indexed code found. Upload and index a repo first.", "sources": []}
     res = client.chat.completions.create(
-        model="llama3-8b-8192",
+        model="llama-3.3-70b-versatile",
         messages=[{"role":"user","content":build_prompt(query,chunks)}],
         temperature=0.2
     )
