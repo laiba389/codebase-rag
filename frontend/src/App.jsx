@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import axios from "axios"
 
-const API = "http://localhost:8000"
+const API = "https://codebase-rag-api.onrender.com"
 
 const Spinner = () => (
   <div style={{display:"flex",gap:4,padding:"10px 14px"}}>
