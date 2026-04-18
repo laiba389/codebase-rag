@@ -1,0 +1,9 @@
+backend/venv/
+backend/__pycache__/
+backend/faiss_index.pkl
+backend/uploaded_repo/
+backend/.env
+frontend/node_modules/
+frontend/dist/
+*.pyc
+*.pyo
