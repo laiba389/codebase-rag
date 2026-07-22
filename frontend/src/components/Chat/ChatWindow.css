@@ -1,0 +1,26 @@
+/* Scrollable chat area */
+.chat-window {
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+}
+
+/* Custom scrollbar */
+.chat-window::-webkit-scrollbar { width: 5px; }
+.chat-window::-webkit-scrollbar-thumb {
+  background: rgba(124, 131, 255, 0.25);
+  border-radius: 999px;
+}
+.chat-window::-webkit-scrollbar-track { background: transparent; }
+
+/* Message list */
+.messages {
+  width: 100%;
+  max-width: 860px;
+  padding: 36px 32px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}

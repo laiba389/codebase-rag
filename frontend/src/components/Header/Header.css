@@ -1,0 +1,105 @@
+.header {
+  height: 68px;
+  padding: 0 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(30px);
+  background: var(--glass);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* ── Left side: logo + wordmark ── */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.header-wordmark {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+}
+
+.header-wordmark h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+
+.header-wordmark span {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+/* ── Right side: actions ── */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.secondary-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface-light);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.secondary-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+}
+
+.theme-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-light);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s, background 0.2s;
+  flex-shrink: 0;
+}
+
+.theme-btn:hover {
+  transform: rotate(18deg);
+  background: var(--surface-hover);
+}

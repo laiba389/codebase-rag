@@ -1,0 +1,39 @@
+.source-chip{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+padding:10px 14px;
+
+border:none;
+
+border-radius:14px;
+
+background:rgba(255,255,255,.05);
+
+color:var(--text);
+
+font-size:13px;
+
+transition:.3s;
+
+cursor:pointer;
+
+}
+
+.source-chip svg{
+
+color:var(--primary);
+
+}
+
+.source-chip:hover{
+
+background:rgba(99,102,241,.18);
+
+box-shadow:0 10px 25px rgba(99,102,241,.20);
+
+}

@@ -1,0 +1,100 @@
+@import "./variables.css";
+@import "./animations.css";
+
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+}
+
+html{
+
+scroll-behavior:smooth;
+
+}
+
+body{
+
+background:var(--bg);
+
+color:var(--text);
+
+font-family:Inter,system-ui,sans-serif;
+
+overflow:hidden;
+
+}
+
+button{
+
+cursor:pointer;
+
+font-family:inherit;
+
+transition:
+transform .25s,
+background .25s,
+box-shadow .25s;
+
+}
+
+button:active{
+
+transform:scale(.96);
+
+}
+
+input{
+
+font-family:inherit;
+
+}
+
+a{
+
+text-decoration:none;
+
+color:inherit;
+
+}
+
+#root{
+
+height:100vh;
+
+}
+
+h1{
+  font-size:52px;
+  font-weight:800;
+  letter-spacing:-2px;
+  line-height:1.05;
+  color:var(--text);
+}
+
+h2{
+  color:var(--text);
+  font-weight:700;
+}
+
+p{
+  font-size:18px;
+  line-height:1.8;
+  color:var(--text-light);
+}
+
+@media(max-width:768px){
+
+h1{
+font-size:38px;
+}
+
+p{
+font-size:16px;
+}
+
+}

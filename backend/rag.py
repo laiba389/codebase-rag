@@ -24,7 +24,11 @@ Answer clearly and mention the filename(s) that were relevant."""
 def ask(query, k=5):
     chunks = search(query, k=k)
     if not chunks:
-        return {"answer": "No indexed code found. Upload and index a repo first.", "sources": []}
+        return {
+            "answer": "No indexed code found. Upload and index a repo first.",
+            "sources": [],
+            "snippets": []
+        }
     res = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[{"role":"user","content":build_prompt(query,chunks)}],
@@ -33,4 +37,15 @@ def ask(query, k=5):
     sources = list(set(
         c["file"].split("/")[-1].split("\\")[-1] for c in chunks
     ))
-    return {"answer": res.choices[0].message.content, "sources": sources}
+    snippets = [
+        {
+            "file": c["file"].split("/")[-1].split("\\")[-1],
+            "text": c["text"][:300]
+        }
+        for c in chunks[:3]
+    ]
+    return {
+        "answer": res.choices[0].message.content,
+        "sources": sources,
+        "snippets": snippets
+    }

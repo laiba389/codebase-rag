@@ -16,6 +16,8 @@ CODE_EXTS = {
     ".cs",".rb",".php",".md",".txt"
 }
 
+MAX_FILE_SIZE = 50 * 1024  # skip files larger than 50KB
+
 def get_all_files(repo_path: str):
     files = []
     for root, dirs, filenames in os.walk(repo_path):
@@ -23,13 +25,13 @@ def get_all_files(repo_path: str):
         for fname in filenames:
             path = Path(root) / fname
             if path.suffix in CODE_EXTS:
-                files.append(str(path))
+                if os.path.getsize(path) < MAX_FILE_SIZE:
+                    files.append(str(path))
     return files
 
-def chunk_file(file_path: str, chunk_size=800, overlap=100):
+def chunk_file(file_path: str, chunk_size=600, overlap=50):
     try:
-        with open(file_path, "r", encoding="utf-8",
-                  errors="ignore") as f:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             content = f.read()
     except Exception:
         return []
@@ -47,6 +49,7 @@ def chunk_file(file_path: str, chunk_size=800, overlap=100):
         })
         start += chunk_size - overlap
     return chunks
+
 
 def parse_repo(repo_path: str):
     all_chunks = []
